@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Peer IP change Script
 
 # 1. Receive input from user via arguments
