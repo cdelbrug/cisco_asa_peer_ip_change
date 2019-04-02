@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Peer IP change Script
 
 # 1. Receive input from user via arguments
@@ -43,6 +44,8 @@ net_connect = ConnectHandler(**cisco_asa)
 # allow full output from commands instead of having to hit spacebar.
 net_connect.send_command('terminal pager 0')
 
+# checking if names is configured on the ASA or not
+
 if_names = net_connect.send_command('show run | i names')
 names = False
 
@@ -53,6 +56,8 @@ if re.search(r"\bnames\b", if_names):
 else:
     print("Names is NOT configured.")
 
+# retrieving crypto map info from firewall
+
 crypto_peer_ip = net_connect.send_command(f'show run map | i {old_ip}')
 
 print(f'''
@@ -60,20 +65,21 @@ The initial crypto map peer line(s) is:\n
 {crypto_peer_ip}
 ''')
 
-# print("Making crypto map a list\n")
-#
-# map_list = []
-#
-# for list_map in crypto_peer_ip:
+# converting to a list
 
+cry_map_listed = crypto_peer_ip.split('\n')
 
-parsed_cry_map = CiscoConfParse(crypto_peer_ip)
+# parsing the output with CiscoConfParse
+
+parsed_cry_map = CiscoConfParse(cry_map_listed)
+
+# Looping through the parsed_cry_map to find the line with the old peer in it
 
 for exact_cry_match in parsed_cry_map.find_objects(r'\b{old_ip}\b'):
     pass
 
 print("The exact crypto map peer line is: \n")
-print(exact_cry_match.text, '\n')
+print(exact_map)
 
 print("Gathering tunnel-group configuration \n")
 
